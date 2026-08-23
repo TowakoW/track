@@ -59,10 +59,9 @@ azimuth (A) = arccos((sin(dec)-sin(a)sin(lat))/cos(a)cos(lat))
 ### Step 5: Plotting
 Using matplotlib.pyplot, plot two sub-plots: cartesian interactable graph (live updating) and polar local sky projection. 
 
-<iframe src="/Planet-Spotter/solar_system_graph.html" width="100%" height="600px" style="border:none;"></iframe>
 Shot taken on Aug 23, 2026 at 1:15 AM
 
-<img src="SolarSystemObjLocations.png" alt="Shot taken on Aug 23, 2026 at 1:15 AM">
+<img src="SolarSystemObjLocations.png" alt="Shot taken on Aug 23, 2026 at 1:27 AM">
 
 ### Next Steps: 
 Continue converting to spherical and find a way to map visible stars relative to geographic observer coordinates!!
