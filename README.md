@@ -34,6 +34,7 @@ Fetch rough geographical location: (ip-api.com)[https://ip-api.com/]
 Convert to topocentric view with the earth in the middle, then convert to spherical coordinates. Use hour angle, local sidereal time, ra, and declination (radians) to find altitude and azimuth.
 
 **Equations:**
+
 r = sqrt(x**2 + y**2 + z**2)
   - distance
 
@@ -58,7 +59,10 @@ azimuth (A) = arccos((sin(dec)-sin(a)sin(lat))/cos(a)cos(lat))
 ### Step 5: Plotting
 Using matplotlib.pyplot, plot two sub-plots: cartesian interactable graph (live updating) and polar local sky projection. 
 
+<iframe src="/Planet-Spotter/solar_system_graph.html" width="100%" height="600px" style="border:none;"></iframe>
+Shot taken on Aug 23, 2026 at 1:15 AM
 
+<img src="SolarSystemObjLocations.png" alt="Shot taken on Aug 23, 2026 at 1:15 AM">
 
 ### Next Steps: 
 Continue converting to spherical and find a way to map visible stars relative to geographic observer coordinates!!
