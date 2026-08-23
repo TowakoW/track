@@ -6,6 +6,7 @@ from planet_spherical import cart_to_sph, alt_azmuth, find_RA_DEC
 import numpy as np
 from planet_data import System
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 def sph_calc(
         system: System,
@@ -26,13 +27,16 @@ def sky_plot(
         labels: list,
         colors: list,
         legend: bool,
-        alt_az):
+        alt_az,
+        ax):
     """
     Plot polar graph scatterplot showing locations where objects can be found for night sky
     """
 
-    fig = plt.figure(figsize=(7, 7))
-    ax = fig.add_subplot(111, projection='polar')
+    # fig = plt.figure(figsize=(7, 7))
+    # ax = fig.add_subplot(111, projection='polar')
+
+    ax.clear()
 
     # match astronomical conventions
     ax.set_theta_zero_location('N') # put 0 degrees (north) at top
@@ -74,10 +78,12 @@ def sky_plot(
     theta = np.linspace(0, 2 * np.pi, 360)
     ax.plot(theta, np.full_like(theta, 90), color="black", linewidth=1)
 
-    plt.title("Local Sky View (Topocentric Polar Projection)")
+    time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    plt.title(f"Local Sky View (Topocentric Polar Projection) Time: {time}")
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
 
 

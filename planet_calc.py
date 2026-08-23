@@ -28,6 +28,7 @@ def plot(
         labels: list,
         colors: list,
         legend: bool,
+        ax
     ) -> bool:
         """
         Plots the initial positions.
@@ -42,22 +43,23 @@ def plot(
             whether to show legend or not
         """
 
-        def quit_graph(event):
-            """
-            Conditions to manually quit the live-updating graph
-            event == q to quit
-            """
-            nonlocal plotting
-            if event.key =="q":
-                plotting = False
-                plt.close(fig)
+        # def quit_graph(event):
+        #     """
+        #     Conditions to manually quit the live-updating graph
+        #     event == q to quit
+        #     """
+        #     nonlocal plotting
+        #     if event.key =="q":
+        #         plotting = False
+        #         plt.close(fig)
 
         # Create figure and 3d axes
 
+        # fig = ax.figure
+
         plt.ion()
-        
-        fig = plt.figure(figsize=(8, 8))
-        ax = fig.add_subplot(projection="3d")
+
+        ax.clear()
 
         # Set graph size
         max_val = int(5.5e+09)
@@ -66,27 +68,24 @@ def plot(
         ax.set_ylim(-max_val, max_val)
         ax.set_zlim(-max_val, max_val)
 
-        count = 0
+        # count = 0
         # plot initial
-        plotting = True
+        # plotting = True
 
         # Manual stop
-        fig.canvas.mpl_connect("key_press_event", quit_graph)
+        # fig.canvas.mpl_connect("key_press_event", quit_graph)
 
         # loop
-        while plotting:
-            count += 1
-            centered_positions = center_observer(system, labels)
-            for i in range(system.num_particles):
-                ax.scatter(
-                        centered_positions[i, 0], centered_positions[i, 1], centered_positions[i, 2],
-                        marker="o", color=colors[i],
-                        label=labels[i] if count == 1 else "_nolegend_"
+        # while plotting:
+        #     count += 1
+        centered_positions = center_observer(system, labels)
+        for i in range(system.num_particles):
+            ax.scatter(
+                    centered_positions[i, 0], centered_positions[i, 1], centered_positions[i, 2],
+                    marker="o", color=colors[i],
+                    # label=labels[i] if count == 1 else "_nolegend_"
                 )
-                plt.pause(0.01)
-
-            if legend and count == 1:
-                ax.legend()
+            # plt.pause(0.01)
 
             current_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             # Set labels
@@ -96,16 +95,19 @@ def plot(
             ax.set_title(
                    f"Current Solar System Object Locations: {current_time}" 
                    )
-            fig.canvas.draw()
-            fig.canvas.flush_events()
+            # fig.canvas.draw()
+            # fig.canvas.flush_events()
 
-            # Stop live update after 30 seconds
-            if count > 30:
-                   plotting = False
+            # # Stop live update after 30 seconds
+            # if count > 30:
+            #        plotting = False
+
+        if legend:
+               ax.legend()
 
         plt.ioff()
-        plt.show()
-        return plotting
+        # plt.show()
+        # return plotting
 
         
 
