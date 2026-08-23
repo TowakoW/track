@@ -6,6 +6,8 @@ from datetime import datetime
 from planet_spherical import center_observer, cart_to_sph
 from sky_map import sky_plot, sph_calc
 import matplotlib.pyplot as plt
+import base64
+from pathlib import Path
 
 
 INITIAL_CONDITIONS = "solar_system"
