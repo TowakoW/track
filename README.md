@@ -64,7 +64,8 @@ Shot taken on Aug 23, 2026 at 1:15 AM
 <img src="SolarSystemObjLocations.png" alt="Shot taken on Aug 23, 2026 at 1:27 AM">
 
 ### Next Steps: 
-Continue converting to spherical and find a way to map visible stars relative to geographic observer coordinates!!
+- Add moons
+- Visual representation on cartesian graph showing visible part of night sky?
 
 ## Resources
 ### APIs Used:
