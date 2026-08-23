@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 # from planet_data import System
 from typing import Literal
-from planet_spherical import center_observer
+from planet_spherical import center_observer, cart_to_sph
 
 # Constants:
 
@@ -73,15 +73,13 @@ def plot(
         # Manual stop
         fig.canvas.mpl_connect("key_press_event", quit_graph)
 
-        # center earth
-        center_coords = center_observer(system, labels)
-
         # loop
         while plotting:
             count += 1
+            centered_positions = center_observer(system, labels)
             for i in range(system.num_particles):
                 ax.scatter(
-                        center_coords[i, 0], center_coords[i, 1], center_coords[i, 2],
+                        centered_positions[i, 0], centered_positions[i, 1], centered_positions[i, 2],
                         marker="o", color=colors[i],
                         label=labels[i] if count == 1 else "_nolegend_"
                 )
@@ -107,6 +105,7 @@ def plot(
 
         plt.ioff()
         plt.show()
+        return plotting
 
         
 

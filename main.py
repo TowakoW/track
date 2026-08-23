@@ -3,6 +3,7 @@ from horizons_parse import horizons_specifics
 import planet_calc
 import numpy as np
 from datetime import datetime
+from planet_spherical import center_observer, cart_to_sph
 
 
 INITIAL_CONDITIONS = "solar_system"
@@ -15,6 +16,7 @@ def main() -> None:
     # Initialize system
     print("Fetching data from NASA Horizons...")
     system, labels, colors, legend = get_initial_conditions(INITIAL_CONDITIONS)
+
 
     # Create acceleration array
     current_accel = np.zeros((system.num_particles, 3))
