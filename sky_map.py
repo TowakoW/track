@@ -80,9 +80,13 @@ def sky_plot(
 
     time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    plt.title(f"Local Sky View (Topocentric Polar Projection) Time: {time}")
+    ax.set_title(
+        f"Local Sky View (Topocentric Polar Projection)\nTime: {time}",
+        pad=18,
+        fontsize=10,
+    )
     plt.grid(True, linestyle='--', alpha=0.6)
-    plt.tight_layout()
+    ax.figure.tight_layout()
     # plt.show()
 
 

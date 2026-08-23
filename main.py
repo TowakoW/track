@@ -90,8 +90,8 @@ def main() -> None:
             fig.canvas.flush_events()
             plt.pause(0.01)
 
-        # fig.savefig("SolarSystemObjLocations.png")
-        # print("Saved graph to SolarSystemObjLocations.png")
+        fig.savefig("SolarSystemObjLocations.png")
+        print("Saved graph to SolarSystemObjLocations.png")
 
         if not continue_running:
             break
