@@ -77,25 +77,34 @@ def get_initial_conditions(initial_condition: dict
         """
 
         # GM values (AU^3/s^2)
-        sun_data = horizons_specifics(10),
-        mercury_data = horizons_specifics(199),
-        venus_data = horizons_specifics(299),
-        earth_data = horizons_specifics(399),
-        mars_data = horizons_specifics(499),
-        jupiter_data = horizons_specifics(599),
-        saturn_data = horizons_specifics(699),
-        uranus_data = horizons_specifics(799),
-        neptune_data = horizons_specifics(899),
-        pluto_data = horizons_specifics(999)
-        moon_data = horizons_specifics(301),
-        phobos_data = horizons_specifics(401),
-        deimos_data = horizons_specifics(402),
-        io_data = horizons_specifics(501),
-        europa_data = horizons_specifics(502),
-        ganymede_data = horizons_specifics(503)
+        sun_data = horizons_specifics(10)[0]
+        mercury_data = horizons_specifics(199)[0]
+        venus_data = horizons_specifics(299)[0]
+        earth_data = horizons_specifics(399)[0]
+        mars_data = horizons_specifics(499)[0]
+        jupiter_data = horizons_specifics(599)[0]
+        saturn_data = horizons_specifics(699)[0]
+        uranus_data = horizons_specifics(799)[0]
+        neptune_data = horizons_specifics(899)[0]
+        pluto_data = horizons_specifics(999)[0]
+        moon_data = horizons_specifics(301)[0]
+        phobos_data = horizons_specifics(401)[0]
+        deimos_data = horizons_specifics(402)[0]
+        io_data = horizons_specifics(501)[0]
+        europa_data = horizons_specifics(502)[0]
+        # ganymede_data = horizons_specifics(503)[0]
 
 
-        # GM data:
+        # GM data with fallback values for missing bodies
+        from astropy import units as u
+        
+        # Fallback GM values (km³/s²) from literature for bodies not in Horizons API
+        GM_FALLBACK = {
+            "Phobos": 0.0001263 * (u.km**3/u.s**2),
+            "Deimos": 0.00002 * (u.km**3/u.s**2),
+            "Europa": 3202.739 * (u.km**3/u.s**2),
+        }
+        
         GM_AU_S = {
                 "Sun": sun_data['gm'],
                 "Mercury": mercury_data['gm'],
@@ -108,12 +117,18 @@ def get_initial_conditions(initial_condition: dict
                 "Neptune": neptune_data['gm'],
                 "Pluto": pluto_data['gm'],
                 "Moon": moon_data['gm'],
-                "Phobos": phobos_data['gm'],
-                "Deimos": deimos_data['gm'],
+                "Phobos": phobos_data['gm'] if phobos_data['gm'] is not None else GM_FALLBACK["Phobos"],
+                "Deimos": deimos_data['gm'] if deimos_data['gm'] is not None else GM_FALLBACK["Deimos"],
                 'Io': io_data['gm'],
-                "Europa": europa_data['gm'],
-                "Ganymede": ganymede_data['gm']
+                "Europa": europa_data['gm'] if europa_data['gm'] is not None else GM_FALLBACK["Europa"],
+                # "Ganymede": ganymede_data['gm']
         }
+        
+        # Debug: show which GM values are being used
+        print("\n=== GM VALUES ===")
+        for name, gm in GM_AU_S.items():
+            is_fallback = " (fallback)" if name in ["Phobos", "Deimos", "Europa"] and gm == GM_FALLBACK.get(name) else ""
+            print(f"{name}: {gm}{is_fallback}")
 
         # Ephemeris data:
         sun_eph = sun_data['ephemeris']
@@ -123,7 +138,7 @@ def get_initial_conditions(initial_condition: dict
         mars_eph = mars_data['ephemeris']
         jupiter_eph = jupiter_data['ephemeris']
         saturn_eph = saturn_data['ephemeris']
-        uranus_eph =  uranus_data['gm']
+        uranus_eph =  uranus_data['ephemeris']
         neptune_eph = neptune_data['ephemeris']
         pluto_eph = pluto_data['ephemeris']
         moon_eph = moon_data['ephemeris']
@@ -131,65 +146,65 @@ def get_initial_conditions(initial_condition: dict
         deimos_eph = deimos_data['ephemeris']
         io_eph = io_data['ephemeris']
         europa_eph = europa_data['ephemeris']
-        ganymede_eph = ganymede_data['ephemeris']
+        # ganymede_eph = ganymede_data['ephemeris']
 
 
         # ephemeris rows: [jd, datetime, x, y, z, vx, vy, vz, ...]
         SOLAR_SYSTEM_POS = {
-            "Sun": sun_eph[2:5],
-            "Mercury": mercery_eph[2:5],
-            "Venus": venus_eph[2:5],
-            "Earth": earth_eph[2:5],
-            "Mars": mars_eph[2:5],
-            "Jupiter": jupiter_eph[2:5],
-            "Saturn": saturn_eph[2:5],
-            "Uranus": uranus_eph[2:5],
-            "Neptune": neptune_eph[2:5],
-            "Pluto": pluto_eph[2:5],
-            "Moon": moon_eph[2:5],
-            "Phobos": phobos_eph[2:5],
-            "Deimos": deimos_eph[2:5],
-            "Io": io_eph[2:5],
-            "Europa": europa_eph[2:5],
-            "Ganymede": ganymede_eph[2:5]
+            "Sun": sun_eph[0][2:5],
+            "Mercury": mercery_eph[0][2:5],
+            "Venus": venus_eph[0][2:5],
+            "Earth": earth_eph[0][2:5],
+            "Mars": mars_eph[0][2:5],
+            "Jupiter": jupiter_eph[0][2:5],
+            "Saturn": saturn_eph[0][2:5],
+            "Uranus": uranus_eph[0][2:5],
+            "Neptune": neptune_eph[0][2:5],
+            "Pluto": pluto_eph[0][2:5],
+            "Moon": moon_eph[0][2:5],
+            "Phobos": phobos_eph[0][2:5],
+            "Deimos": deimos_eph[0][2:5],
+            "Io": io_eph[0][2:5],
+            "Europa": europa_eph[0][2:5],
+            # "Ganymede": ganymede_eph[0][2:5]
         }
 
         SOLAR_SYSTEM_VEL = {
-            "Sun": sun_eph[5:8],
-            "Mercury": mercery_eph[5:8],
-            "Venus": venus_eph[5:8],
-            "Earth": earth_eph[5:8],
-            "Mars": mars_eph[5:8],
-            "Jupiter": jupiter_eph[5:8],
-            "Saturn": saturn_eph[5:8],
-            "Uranus": uranus_eph[5:8],
-            "Neptune": neptune_eph[5:8],
-            "Pluto": pluto_eph[5:8],
-            "Moon": moon_eph[5:8],
-            "Phobos": phobos_eph[5:8],
-            "Deimos": deimos_eph[5:8],
-            "Io": io_eph[5:8],
-            "Europa": europa_eph[5:8],
-            "Ganymede": ganymede_eph[5:8]
+            "Sun": sun_eph[0][5:8],
+            "Mercury": mercery_eph[0][5:8],
+            "Venus": venus_eph[0][5:8],
+            "Earth": earth_eph[0][5:8],
+            "Mars": mars_eph[0][5:8],
+            "Jupiter": jupiter_eph[0][5:8],
+            "Saturn": saturn_eph[0][5:8],
+            "Uranus": uranus_eph[0][5:8],
+            "Neptune": neptune_eph[0][5:8],
+            "Pluto": pluto_eph[0][5:8],
+            "Moon": moon_eph[0][5:8],
+            "Phobos": phobos_eph[0][5:8],
+            "Deimos": deimos_eph[0][5:8],
+            "Io": io_eph[0][5:8],
+            "Europa": europa_eph[0][5:8],
+            # "Ganymede": ganymede_eph[0][5:8]
             }
 
         SOLAR_SYSTEM_COLORS = {
                 "Sun": 'gold',
-                "Mecury": 'tomato',
+                "Mercury": 'tomato',
                 "Venus": 'burlywood',
                 "Earth": 'lightseagreen',
                 "Mars": 'orangered',
-                "Jupiiter": 'peru',
+                "Jupiter": 'peru',
                 "Saturn": 'slategrey',
                 "Uranus": 'olive',
                 "Neptune": 'teal',
                 "Pluto": 'aquamarine',
                 "Moon": 'grey',
-                "Phobos": 'tan',
+                "Phobos": 'forestgreen',
                 "Deimos": 'cornflowerblue',
                 "Io": 'lawngreen',
                 "Europa": 'pink',
-                "Ganymede": 'brown'
+                # "Ganymede": 'brown'
 
 
 
@@ -226,7 +241,7 @@ def get_initial_conditions(initial_condition: dict
             G13 = np.array(GM_AU_S["Deimos"])
             G14 = np.array(GM_AU_S['Io'])
             G15 = np.array(GM_AU_S["Europa"])
-            G16 = np.array(GM_AU_S['Ganymede'])
+            # G16 = np.array(GM_AU_S['Ganymede'])
             
             R1 = np.array(SOLAR_SYSTEM_POS["Sun"], dtype=float)
             R2 = np.array(SOLAR_SYSTEM_POS["Mercury"], dtype=float)
@@ -243,7 +258,7 @@ def get_initial_conditions(initial_condition: dict
             R13 = np.array(SOLAR_SYSTEM_POS["Deimos"], dtype=float)
             R14 = np.array(SOLAR_SYSTEM_POS["Io"], dtype=float)
             R15 = np.array(SOLAR_SYSTEM_POS["Europa"], dtype=float)
-            R16 = np.array(SOLAR_SYSTEM_POS["Ganymede"], dtype=float)
+            # R16 = np.array(SOLAR_SYSTEM_POS["Ganymede"], dtype=float)
 
 
 
@@ -262,7 +277,7 @@ def get_initial_conditions(initial_condition: dict
             V13 = np.array(SOLAR_SYSTEM_VEL["Deimos"], dtype=float)
             V14 = np.array(SOLAR_SYSTEM_VEL["Io"], dtype=float)
             V15 = np.array(SOLAR_SYSTEM_VEL["Europa"], dtype=float)
-            V16 = np.array(SOLAR_SYSTEM_VEL["Ganymede"], dtype=float)
+            # V16 = np.array(SOLAR_SYSTEM_VEL["Ganymede"], dtype=float)
 
 
             Gm = np.array(
@@ -282,7 +297,7 @@ def get_initial_conditions(initial_condition: dict
                          G13,
                          G14,
                          G15,
-                         G16
+                        #  G16
                    ]
             )
 
@@ -303,7 +318,7 @@ def get_initial_conditions(initial_condition: dict
                         R13,
                         R14,
                         R15,
-                        R16
+                        # R16
                     ]
                 )
             v = np.array(
@@ -323,12 +338,12 @@ def get_initial_conditions(initial_condition: dict
                         V13,
                         V14,
                         V15,
-                        V16
+                        # V16
                     ]
                 )
 
             system = System(
-                num_particles= 16,
+                num_particles= 15,
                 Gm=Gm,
                 x=x,
                 v=v,
@@ -336,6 +351,11 @@ def get_initial_conditions(initial_condition: dict
                 # G=G,
                 )
             system.center_of_mass_correction()
+
+            # After building x and v arrays, validate shapes
+            for i, name in enumerate(SOLAR_SYSTEM_POS.keys()):
+                if x[i].shape != (3,) or v[i].shape != (3,):
+                    print(f"Warning: {name} has invalid shape")
 
             labels = list(SOLAR_SYSTEM_POS.keys())
             colors = list(SOLAR_SYSTEM_COLORS.values())

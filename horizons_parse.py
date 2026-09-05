@@ -3,6 +3,7 @@ from horizons_api import fetch_horizons_data
 from pprint import pprint
 from astropy import units as u
 from typing import Literal, Any
+import re
 
 
 def horizons_specifics(naifids: list[int]) -> Any:
@@ -43,7 +44,13 @@ def horizons_specifics(naifids: list[int]) -> Any:
 
                 if len(parts) > 1:
                     gm_text = parts[1].split()[0]
-                    gm_value = float(gm_text.split("+=")[0])
+                    gm_match = re.match(
+                        r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][+-]?\d+)?",
+                        gm_text,
+                    )
+                    if gm_match is None:
+                        raise ValueError(f"Unable to parse GM value: {gm_text}")
+                    gm_value = float(gm_match.group())
                     gm = gm_value * (u.km**3/u.s**2)
 
         # gm_val_km = None

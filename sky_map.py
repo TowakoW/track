@@ -55,13 +55,29 @@ def sky_plot(
     ax.set_xticklabels(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
 
     # loop and plot visible planets
-    visible_labels = [label for label in labels if label != "Earth"]
-    visible_colors = [color for label, color in zip(labels, colors) if label != "Earth"]
-    for index, alt_az in enumerate(alt_az):
-        name = visible_labels[index]
-        alt_rad, az_rad = alt_az[0], alt_az[1]
+    legend_handles = []
+    for index, alt_az_data in enumerate(alt_az):
+        name = labels[index]
+        if name == "Earth":
+            continue
 
+        alt_rad, az_rad = alt_az_data[0], alt_az_data[1]
         alt_deg = np.degrees(alt_rad)
+
+        # Keep the label in the legend even when the object is below the horizon.
+        if legend:
+            legend_handles.append(
+                plt.Line2D(
+                    [],
+                    [],
+                    linestyle='',
+                    marker='o',
+                    markersize=8,
+                    markerfacecolor=colors[index],
+                    markeredgecolor=colors[index],
+                    label=name,
+                )
+            )
 
         # Filter only obj above horizon line
         if alt_deg < 0:
@@ -69,11 +85,10 @@ def sky_plot(
             continue
 
         r_plot = 90.0 - alt_deg
+        ax.scatter(az_rad, r_plot, c=colors[index], s=100, label=name, zorder=3)
 
-        ax.scatter(az_rad, r_plot, c=visible_colors[index], s=100, label=name, zorder=3)
-
-    if legend == True:
-        ax.legend(loc='upper left')
+    if legend:
+        ax.legend(handles=legend_handles, loc='upper left')
 
     theta = np.linspace(0, 2 * np.pi, 360)
     ax.plot(theta, np.full_like(theta, 90), color="black", linewidth=1)
